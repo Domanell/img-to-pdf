@@ -33,6 +33,31 @@ A production-ready React application that converts arbitrarily long images into 
 - **Canvas API**: Client-side image processing
 - **Vite**: Fast development and build tool
 
+
+
+## Live Demo
+
+This app can be published as a static site using GitHub Pages.
+
+**Live version:**
+https://Domanell.github.io/img-to-pdf/
+
+## Deployment to GitHub Pages
+
+To deploy your own version:
+
+1. Make sure your project is in a GitHub repository (e.g., https://github.com/Domanell/img-to-pdf).
+2. In vite.config.js, set the `base` option to `/img-to-pdf/`.
+3. Install dependencies:
+	```bash
+	npm install
+	```
+4. Deploy with:
+	```bash
+	npm run deploy
+	```
+5. After deployment, your app will be available at `https://<your-username>.github.io/img-to-pdf/`.
+
 ## Installation
 
 ```bash
