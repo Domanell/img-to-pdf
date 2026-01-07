@@ -1,0 +1,20 @@
+{
+	"name": "img-to-pdf-converter",
+	"version": "1.0.0",
+	"description": "Convert long images into multi-page A4 PDFs with quality preservation",
+	"main": "index.js",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"jspdf": "^2.5.1"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-react": "^4.2.1",
+		"vite": "^5.0.11"
+	}
+}
