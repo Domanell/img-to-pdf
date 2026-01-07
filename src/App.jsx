@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { jsPDF } from 'jspdf';
+import pica from 'pica';
 import './App.css';
 
 // A4 dimensions at 300 DPI
@@ -96,6 +97,9 @@ function App() {
 			const totalPages = imageInfo.pageCount;
 			const previews = [];
 
+			// Create pica instance
+			const picaInstance = pica();
+
 			// Create reusable canvas
 			const canvas = document.createElement('canvas');
 			canvas.width = A4_WIDTH_PX;
@@ -124,28 +128,38 @@ function App() {
 				const remainingHeight = img.height - sourceY;
 				const sourceHeight = Math.min(sourceHeightPerPage, remainingHeight);
 
-				// Clear canvas
+				// Create a temporary canvas for the source slice
+				const srcCanvas = document.createElement('canvas');
+				srcCanvas.width = img.width;
+				srcCanvas.height = sourceHeight;
+				const srcCtx = srcCanvas.getContext('2d');
+				// Copy the required part of the image
+				srcCtx.drawImage(img, 0, sourceY, img.width, sourceHeight, 0, 0, img.width, sourceHeight);
+
+				// Clear the target canvas
 				ctx.clearRect(0, 0, A4_WIDTH_PX, A4_HEIGHT_PX);
 
-				// Fill with white background for partial pages
+				// Calculate scaled height for this slice
 				const scaledHeight = sourceHeight * scaleX;
-				if (scaledHeight < A4_HEIGHT_PX) {
-					ctx.fillStyle = '#ffffff';
-					ctx.fillRect(0, 0, A4_WIDTH_PX, A4_HEIGHT_PX);
-				}
 
-				// Draw image slice onto canvas - seamless slicing
-				ctx.drawImage(
-					img,
-					0,
-					sourceY,
-					img.width,
-					sourceHeight, // Source rectangle from original image
-					0,
-					0,
-					A4_WIDTH_PX,
-					scaledHeight // Destination rectangle on canvas
-				);
+				// Always clear and fill the canvas with white
+				ctx.clearRect(0, 0, A4_WIDTH_PX, A4_HEIGHT_PX);
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(0, 0, A4_WIDTH_PX, A4_HEIGHT_PX);
+
+				// If the scaled image slice is shorter than A4 height,
+				// it is placed at the top of the page and not stretched vertically.
+				// The remaining space below is filled with white.
+				let tempCanvas = document.createElement('canvas');
+				tempCanvas.width = A4_WIDTH_PX;
+				tempCanvas.height = Math.round(scaledHeight);
+				await picaInstance.resize(srcCanvas, tempCanvas, {
+					width: A4_WIDTH_PX,
+					height: Math.round(scaledHeight),
+				});
+
+				// Draw the resized slice onto the main canvas, always aligned to the top
+				ctx.drawImage(tempCanvas, 0, 0);
 
 				// Convert canvas to data URL
 				const dataURL = canvas.toDataURL('image/jpeg', 0.95);

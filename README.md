@@ -5,7 +5,7 @@ A production-ready React application that converts arbitrarily long images into 
 ## Features
 
 - **Drag & Drop Upload**: Intuitive file upload with drag-and-drop support
-- **Quality Preservation**: No downscaling or compression artifacts, pixel-perfect accuracy
+- **Quality Preservation**: No downscaling or compression artifacts, pixel-perfect accuracy (uses pica for high-quality resizing)
 - **Memory Efficient**: Processes large images in chunks to avoid browser crashes
 - **Progress Tracking**: Real-time progress bar and page-by-page processing status
 - **Preview Thumbnails**: Visual preview of all generated PDF pages
@@ -19,6 +19,7 @@ A production-ready React application that converts arbitrarily long images into 
 - **Input formats**: PNG, JPG, JPEG (any dimensions)
 - **Target page size**: A4 at 300 DPI = 2480×3508 pixels
 - **Slicing algorithm**: Divides image height by A4 height, creates N full pages + 1 partial page if remainder exists
+- **High-quality resizing**: Uses [pica](https://github.com/nodeca/pica) for best-in-class image scaling before adding to PDF
 
 ### Memory Management
 
@@ -30,10 +31,9 @@ A production-ready React application that converts arbitrarily long images into 
 
 - **React 18**: Modern UI with hooks
 - **jsPDF**: PDF generation library
+- **pica**: High-quality image resizing in the browser
 - **Canvas API**: Client-side image processing
 - **Vite**: Fast development and build tool
-
-
 
 ## Live Demo
 
@@ -49,13 +49,13 @@ To deploy your own version:
 1. Make sure your project is in a GitHub repository (e.g., https://github.com/Domanell/img-to-pdf).
 2. In vite.config.js, set the `base` option to `/img-to-pdf/`.
 3. Install dependencies:
-	```bash
-	npm install
-	```
+   ```bash
+   npm install
+   ```
 4. Deploy with:
-	```bash
-	npm run deploy
-	```
+   ```bash
+   npm run deploy
+   ```
 5. After deployment, your app will be available at `https://<your-username>.github.io/img-to-pdf/`.
 
 ## Installation
@@ -98,11 +98,11 @@ img-to-pdf/
 
 ## Key Features Implementation
 
-### Canvas-Based Slicing
+### Canvas & Pica-Based Slicing
 
 - Creates reusable canvas element for each page slice
 - Calculates source rectangles: `sourceY = pageIndex × 3508`
-- Uses `ctx.drawImage()` for precise pixel mapping
+- Uses `pica.resize()` for high-quality scaling and `ctx.drawImage()` for precise pixel mapping
 - Maintains aspect ratio with proportional scaling
 
 ### PDF Generation
